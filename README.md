@@ -1,1 +1,85 @@
 # os-final-project
+
+# React Native
+node_modules/
+.expo/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# macOS
+.DS_Store
+
+# VSCode
+.vscode/
+
+# Android/IntelliJ
+build/
+.idea
+.gradle
+local.properties
+*.iml
+*.hprof
+
+# iOS
+ios/Pods/
+ios/build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace
+
+# STM32
+# Ignore build output
+Debug/
+Release/
+*.o
+*.d
+*.elf
+*.hex
+*.bin
+
+# STM32CubeIDE specific
+.settings/
+.cproject
+.project
+
+# Keil MDK-ARM specific
+*.uvguix.*
+*.uvoptx
+*.uvprojx
+*.scvd
+*.lst
+
+# IAR specific
+*.eww
+*.ewd
+*.ewp
+*.dep
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
