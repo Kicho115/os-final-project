@@ -1,12 +1,46 @@
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
+
+const MainScreen = ({navigation}) => {
+  return (
+    <View style={styles.layout}>
+      <Text style={styles.title}>Main Menu</Text>
+      <Button
+        title="Go to Controls"
+        onPress={() => navigation.navigate('Controls')}
+      />
+    </View>
+  );
+};
+
+const ControlsScreen = ({navigation}) => (
+  <View style={styles.layout}>
+    <Text style={styles.title}>Controls</Text>
+    <Button
+      title="Go to Main menu"
+      onPress={() => navigation.navigate('Main')}
+    />
+  </View>
+);
+
+const AppNavigator = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Main" component={MainScreen} />
+    <Stack.Screen name="Controls" component={ControlsScreen} />
+  </Stack.Navigator>
+);
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <NavigationContainer>
+      <AppNavigator />
       <StatusBar style="auto" />
-    </View>
+    </NavigationContainer>
   );
 }
 
@@ -16,5 +50,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  layout: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 32,
+    marginBottom: 16,
   },
 });
