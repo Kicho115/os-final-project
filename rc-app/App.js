@@ -39,7 +39,7 @@ const ControlsScreen = ({navigation}) => (
 );
 
 const AppNavigator = () => (
-  <Stack.Navigator>
+  <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="Main" component={MainScreen} />
     <Stack.Screen name="Controls" component={ControlsScreen} />
   </Stack.Navigator>
