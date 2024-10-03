@@ -1,15 +1,25 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, Pressable } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
 
+const ConnectButton = (props) => {
+  const { onPress, title = 'Connect Brokeneitor' } = props;
+  return (
+    <Pressable style={styles.button} onPress={onPress}>
+      <Text style={styles.buttonText}>{title}</Text>
+    </Pressable>
+  );
+}
+
 const MainScreen = ({navigation}) => {
   return (
-    <View style={styles.layout}>
+    <View style={styles.mainScreen}>
       <Text style={styles.title}>Main Menu</Text>
+      <ConnectButton />
       <Button
         title="Go to Controls"
         onPress={() => navigation.navigate('Controls')}
@@ -51,7 +61,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  layout: {
+  mainScreen: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -60,4 +70,16 @@ const styles = StyleSheet.create({
     fontSize: 32,
     marginBottom: 16,
   },
+  button: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    margin: 50,
+    fontSize: 1,
+  },
+  buttonText: {
+    color: 'blue',
+    fontWeight: '900',
+    fontSize: 20,
+  }
 });
