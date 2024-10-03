@@ -63,13 +63,13 @@ const Colors = {
 const styles = StyleSheet.create({
   mainScreen: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: Colors.background,
   },
   title: {
     marginBottom: 16,
-    fontSize: 36,
+    fontSize: 46,
     fontWeight: '900',
     color: Colors.secondary,
     letterSpacing: 3,
@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondary,
     borderRadius: 20,
     padding: 20,
-    margin: 50,
     fontSize: 1,
   },
   buttonText: {
