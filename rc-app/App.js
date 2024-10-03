@@ -18,7 +18,7 @@ const ConnectButton = (props) => {
 const MainScreen = ({navigation}) => {
   return (
     <View style={styles.mainScreen}>
-      <Text style={styles.title}>Main Menu</Text>
+      <Text style={styles.title}>Brokeneitor</Text>
       <ConnectButton />
       <Button
         title="Go to Controls"
@@ -68,8 +68,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   title: {
-    fontSize: 32,
     marginBottom: 16,
+    fontSize: 36,
+    fontWeight: '900',
+    color: Colors.secondary,
+    letterSpacing: 3,
   },
   button: {
     backgroundColor: Colors.secondary,
