@@ -54,31 +54,32 @@ export default function App() {
   );
 }
 
+const Colors = {
+  primary: '#00a6ff',
+  secondary: '#e6f4f1',
+  background: '#0051b6',
+};
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   mainScreen: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: Colors.background,
   },
   title: {
     fontSize: 32,
     marginBottom: 16,
   },
   button: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.secondary,
     borderRadius: 20,
     padding: 20,
     margin: 50,
     fontSize: 1,
   },
   buttonText: {
-    color: 'blue',
+    color: Colors.primary,
     fontWeight: '900',
     fontSize: 20,
   }
