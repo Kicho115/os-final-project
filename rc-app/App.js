@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, Pressable, Modal, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import BluetoothConnectModal from './BluetoothModal';
 
 const Stack = createStackNavigator();
 
@@ -13,24 +14,6 @@ const ConnectButton = (props) => {
       <Text style={styles.buttonText}>{title}</Text>
     </Pressable>
   );
-}
-
-const BluetoothConnectModal = ({visible, onClose}) => {
-  return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="slide"
-    >
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>List of devices</Text>
-          <Pressable style={styles.modalButton} onPress={onClose}>
-            <Text style={{color: 'white', fontWeight: '600'}}>Close</Text>
-          </Pressable>
-        </View>
-      </View>
-    </Modal>)
 }
 
 const MainScreen = ({navigation}) => {
