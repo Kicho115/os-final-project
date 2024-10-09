@@ -1,11 +1,37 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Pressable, Modal, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Button, Pressable, PermissionsAndroid} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import BluetoothConnectModal from './BluetoothModal';
 
 const Stack = createStackNavigator();
+
+// Android Bluetooth Permission
+async function requestLocationPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      {
+        title: "Location permission for bluetooth scanning",
+        message:
+          "Grant location permission to allow the app to scan for Bluetooth devices",
+        buttonNeutral: "Ask Me Later",
+        buttonNegative: "Cancel",
+        buttonPositive: "OK",
+      }
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log("Location permission for bluetooth scanning granted");
+    } else {
+      console.log("Location permission for bluetooth scanning denied");
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+}
+
+requestLocationPermission();
 
 const ConnectButton = (props) => {
   const { onPress, title = 'Connect Brokeneitor' } = props;
