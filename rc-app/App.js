@@ -1,57 +1,44 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Pressable, PermissionsAndroid} from 'react-native';
+import { StyleSheet, Text, View, Button, Pressable } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import BluetoothConnectModal from './BluetoothModal';
+import useBLE from "./UseBle";
 
 const Stack = createStackNavigator();
 
-// Android Bluetooth Permission
-async function requestLocationPermission() {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-      {
-        title: "Location permission for bluetooth scanning",
-        message:
-          "Grant location permission to allow the app to scan for Bluetooth devices",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK",
-      }
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log("Location permission for bluetooth scanning granted");
-    } else {
-      console.log("Location permission for bluetooth scanning denied");
-    }
-  } catch (err) {
-    console.warn(err);
-  }
-}
-
-requestLocationPermission();
-
-const ConnectButton = (props) => {
-  const { onPress, title = 'Connect Brokeneitor' } = props;
-  return (
-    <Pressable style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>{title}</Text>
-    </Pressable>
-  );
-}
-
-const MainScreen = ({navigation}) => {
+const MainScreen = ({ navigation }) => {
+  const { requestPermissions, scanForPeripherals, allDevices } = useBLE();
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const scanForDevices = async () => {
+    const isPermissionsEnabled = await requestPermissions();
+    if (isPermissionsEnabled) {
+      scanForPeripherals();
+    }
+  };
+
+  const ConnectButton = (props) => {
+    const { onPress, title = 'Connect Brokeneitor' } = props;
+    return (
+      <Pressable style={styles.button} onPress={onPress}>
+        <Text style={styles.buttonText}>{title}</Text>
+      </Pressable>
+    );
+  };
 
   return (
     <View style={styles.mainScreen}>
       <Text style={styles.title}>Brokeneitor</Text>
-      <ConnectButton onPress={() => setIsModalVisible(true)} />
+      <ConnectButton onPress={() => {
+        setIsModalVisible(true); 
+        scanForDevices();
+      }} />
       <BluetoothConnectModal 
         visible={isModalVisible} 
-        onClose={() => setIsModalVisible(false)}
+        onClose={() => setIsModalVisible(false)} 
+        devices={allDevices} // Pasa la lista de dispositivos como prop
       />
       <Button
         title="Go to Controls"

@@ -1,7 +1,12 @@
-import React from "react";
-import { Text, View, Pressable, Modal, StyleSheet } from 'react-native';
+import React, {useCallback} from "react";
+import { Text, View, Pressable, Modal, StyleSheet, FlatList } from 'react-native';
 
-const BluetoothConnectModal = ({visible, onClose}) => {
+const BluetoothConnectModal = ({visible, onClose, devices}) => {
+  const renderDeviceList = useCallback(({ item }) => {
+    return <Text style={styles.devices}>{item.id}</Text>;
+  }, []);
+  console.log("Dispositivos encontrados:", devices);
+
     return (
       <Modal
         visible={visible}
@@ -11,6 +16,7 @@ const BluetoothConnectModal = ({visible, onClose}) => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>List of devices</Text>
+            <FlatList data={devices} renderItem={renderDeviceList} keyExtractor={(item) => item.id}/>
             <Pressable style={styles.modalButton} onPress={onClose}>
               <Text style={{color: 'white', fontWeight: '600'}}>Close</Text>
             </Pressable>
@@ -54,5 +60,8 @@ const Colors = {
       color: Colors.primary,
       borderRadius: 10,
       padding: 9,
+    },
+    devices: {
+      color: Colors.primary,
     }
   });
