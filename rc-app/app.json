@@ -30,19 +30,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      [
-        "react-native-ble-plx",
-        {
-          "isBackgroundEnabled": true,
-          "modes": [
-            "peripheral",
-            "central"
-          ],
-          "bluetoothAlwaysPermission": "Allow $(PRODUCT_NAME) to connect to bluetooth devices"
-        }
-      ]
-    ],
     "extra": {
       "eas": {
         "projectId": "5de64046-b69b-4cba-81af-734c11a6426b"
