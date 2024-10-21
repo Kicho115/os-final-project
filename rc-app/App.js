@@ -4,19 +4,17 @@ import { StyleSheet, Text, View, Button, Pressable } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import BluetoothConnectModal from './BluetoothModal';
-import useBLE from "./UseBle";
+import useBluetooth from "./UseBluetooth";
 
 const Stack = createStackNavigator();
 
 const MainScreen = ({ navigation }) => {
-  const { requestPermissions, scanForPeripherals, allDevices } = useBLE();
+  const { allDevices, scanForDevices, isDiscovering } = useBluetooth();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const scanForDevices = async () => {
-    const isPermissionsEnabled = await requestPermissions();
-    if (isPermissionsEnabled) {
-      scanForPeripherals();
-    }
+  const handleScan = async () => {
+    setIsModalVisible(true);
+    await scanForDevices();
   };
 
   const ConnectButton = (props) => {
@@ -31,14 +29,12 @@ const MainScreen = ({ navigation }) => {
   return (
     <View style={styles.mainScreen}>
       <Text style={styles.title}>Brokeneitor</Text>
-      <ConnectButton onPress={() => {
-        setIsModalVisible(true); 
-        scanForDevices();
-      }} />
+      <ConnectButton onPress={handleScan} />
       <BluetoothConnectModal 
         visible={isModalVisible} 
         onClose={() => setIsModalVisible(false)} 
-        devices={allDevices} // Pasa la lista de dispositivos como prop
+        devices={allDevices}
+        isScanning={isDiscovering}
       />
       <Button
         title="Go to Controls"
