@@ -43,12 +43,11 @@ function useBluetooth() {
 
       setIsDiscovering(true);
       
-      // Limpiar dispositivos anteriores
+      // Clean previous devices
       setAllDevices([]);
       
-      // Iniciar búsqueda
+  
       const unpairedDevices = await RNBluetoothClassic.startDiscovery();
-      console.log('Dispositivos encontrados:', unpairedDevices);
       
       setAllDevices(unpairedDevices);
 
