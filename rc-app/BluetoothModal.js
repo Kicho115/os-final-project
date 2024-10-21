@@ -7,7 +7,7 @@ const BluetoothConnectModal = ({ visible, onClose, devices, isScanning }) => {
       style={styles.deviceItem}
       onPress={() => console.log('Selected device:', item)}
     >
-      <Text style={styles.deviceName}>{item.name || 'Unknown Device'}</Text>
+      <Text style={styles.deviceName}>{item.name == '0023:10:004BE6' ? 'Brokeneitor' : item.name || 'Unknown Device'}</Text>
       <Text style={styles.deviceAddress}>{item.address}</Text>
     </Pressable>
   );
