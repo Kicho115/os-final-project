@@ -1,14 +1,29 @@
 import React from 'react';
 import { Modal, View, Text, Pressable, ActivityIndicator, FlatList, StyleSheet } from 'react-native';
+import {handleConnection} from './UseBluetooth'
+
+const ConnectDeviceButton = (props) => {
+  const { onPress } = props;
+  return (
+    <Pressable style={styles.connectButton} onPress={onPress}>
+      <Text style={styles.connectButtonText}>Connect</Text>
+    </Pressable>
+  );
+};
 
 const BluetoothConnectModal = ({ visible, onClose, devices, isScanning }) => {
   const renderDevice = ({ item }) => (
     <Pressable
       style={styles.deviceItem}
-      onPress={() => console.log('Selected device:', item)}
+      onPress={() => console.log('Selected device:', item.name)}
     >
-      <Text style={styles.deviceName}>{item.name == '0023:10:004BE6' ? 'Brokeneitor' : item.name || 'Unknown Device'}</Text>
-      <Text style={styles.deviceAddress}>{item.address}</Text>
+      <View style={styles.deviceInfoContainer}>
+        <Text style={styles.deviceName}>{item.name == '0023:10:004BE6' ? 'Brokeneitor' : item.name || 'Unknown Device'}</Text>
+        <Text style={styles.deviceAddress}>{item.address}</Text>
+      </View>
+      <View style={styles.connectButtonContainer}>
+        <ConnectDeviceButton onPress={() => handleConnection(item)} />
+      </View>
     </Pressable>
   );
 
@@ -75,9 +90,12 @@ const styles = StyleSheet.create({
     maxHeight: 300,
   },
   deviceItem: {
-    padding: 15,
+    flexDirection: 'row',
+    padding: 5,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+    justifyContent: 'space-between',
+    alignContent: 'center'
   },
   deviceName: {
     fontSize: 16,
@@ -96,6 +114,27 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  deviceInfoContainer: {
+    justifyContent: 'center'
+  },
+  connectButtonContainer: {
+  },
+  connectButton: {
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    borderRadius: 20,
+    margin: 5,
+    alignItems: 'center',
+    borderColor: '#0051b6',
+    borderWidth: 2,
+  }
+  ,
+  connectButtonText: {
+    color: '#0051b6',
     fontSize: 16,
     fontWeight: 'bold',
   },
