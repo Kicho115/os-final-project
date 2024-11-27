@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, View, Text, Pressable, ActivityIndicator, FlatList, StyleSheet } from 'react-native';
-import {handleConnection} from './UseBluetooth'
+import {handleConnection} from './UseBluetooth';
+import { useNavigation } from '@react-navigation/native';
 
 const ConnectDeviceButton = (props) => {
   const { onPress } = props;
@@ -12,17 +13,19 @@ const ConnectDeviceButton = (props) => {
 };
 
 const BluetoothConnectModal = ({ visible, onClose, devices, isScanning }) => {
+  const navigation = useNavigation(); 
+
   const renderDevice = ({ item }) => (
     <Pressable
       style={styles.deviceItem}
       onPress={() => console.log('Selected device:', item.name)}
     >
       <View style={styles.deviceInfoContainer}>
-        <Text style={styles.deviceName}>{item.name == '0023:10:004BE6' ? 'Brokeneitor' : item.name || 'Unknown Device'}</Text>
+        <Text style={styles.deviceName}>{item.name == '00:23:10:00:4B:E6' ? 'Brokeneitor' : item.name || 'Unknown Device'}</Text>
         <Text style={styles.deviceAddress}>{item.address}</Text>
       </View>
       <View style={styles.connectButtonContainer}>
-        <ConnectDeviceButton onPress={() => handleConnection(item)} />
+        <ConnectDeviceButton onPress={() => handleConnection(item, navigation)} />
       </View>
     </Pressable>
   );

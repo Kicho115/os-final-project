@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Button, Pressable } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import BluetoothConnectModal from './BluetoothModal';
-import useBluetooth from "./UseBluetooth";
+import useBluetooth, {sendData} from "./UseBluetooth";
 
 const Stack = createStackNavigator();
 
@@ -30,11 +30,12 @@ const MainScreen = ({ navigation }) => {
     <View style={styles.mainScreen}>
       <Text style={styles.title}>Brokeneitor</Text>
       <ConnectButton onPress={handleScan} />
-      <BluetoothConnectModal 
-        visible={isModalVisible} 
-        onClose={() => setIsModalVisible(false)} 
+      <BluetoothConnectModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
         devices={allDevices}
         isScanning={isDiscovering}
+        screens={navigation}
       />
       <Button
         title="Go to Controls"
@@ -44,18 +45,30 @@ const MainScreen = ({ navigation }) => {
   );
 };
 
-const ControlsScreen = ({navigation}) => (
-  <View style={styles.layout}>
-    <Text style={styles.title}>Controls</Text>
-    <Button
-      title="Go to Main menu"
-      onPress={() => navigation.navigate('Main')}
-    />
-  </View>
-);
+const ControlsScreen = ({ route, navigation }) => {
+  const { device } = route.params;
+
+  return (
+    <View style={styles.layout}>
+      <Text style={styles.title}>Controls</Text>
+      <Button
+        title="blue"
+        onPress={() => sendData(device, 'Blue')}
+      />
+      <Button
+        title="gree"
+        onPress={() => sendData(device, 'Gree')}
+      />
+      <Button
+        title="Go to Main menu"
+        onPress={() => navigation.navigate('Main')}
+      />
+    </View>
+  );
+};
 
 const AppNavigator = () => (
-  <Stack.Navigator screenOptions={{headerShown: false}}>
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="Main" component={MainScreen} />
     <Stack.Screen name="Controls" component={ControlsScreen} />
   </Stack.Navigator>

@@ -2,15 +2,34 @@ import { useState, useCallback } from 'react';
 import RNBluetoothClassic from 'react-native-bluetooth-classic';
 import { PermissionsAndroid, Platform } from 'react-native';
 
-export const handleConnection = async (device) => {
-  // Check if the device is paired
-  const isPaired = device.bonded;
-  if (!isPaired) {
-    console.log('Device is not paired, attempting to pair...');
-    pairDevice(device.address);
+export const handleConnection = async (device, navigation) => {
+  if (!navigation || typeof navigation.navigate !== 'function') {
+    console.error('Navigation object is not available');
+    return;
   }
 
-  connectToDevice(device);
+  try {
+    const isPaired = device.bonded;
+    if (!isPaired) {
+      console.log('Device is not paired, attempting to pair...');
+      const paired = await pairDevice(device.address);
+      if (!paired) {
+        console.error('Failed to pair device.');
+        return;
+      }
+    }
+
+    console.log('Connecting to device...');
+    const connection = await connectToDevice(device);
+    if (connection) {
+      console.log('Connected to device successfully.');
+      navigation.navigate('Controls', { device });
+    } else {
+      console.error('Failed to connect to the device.');
+    }
+  } catch (error) {
+    console.error('Error handling connection:', error);
+  }
 };
 
 export const connectToDevice = async (device) => {
@@ -35,6 +54,23 @@ export const pairDevice = async (device) => {
     await device.pair();
   } catch (error) {
     console.error('Error pairing with device:', error);
+  }
+};
+
+export const sendData = async (device, data) => {
+  try {
+    const isConnected = await device.isConnected();
+    if (!isConnected) {
+      console.error('The device is not conected');
+      return;
+    }
+
+    //const uint8Data = new Uint8Array([parseInt(data)]);
+
+    await device.write(data);
+    console.log('Data sent:', data);
+  } catch (error) {
+    console.error('Error sending data:', error);
   }
 };
 
