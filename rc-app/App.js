@@ -4,9 +4,10 @@ import { StyleSheet, Text, View, Button, Pressable, Dimensions } from 'react-nat
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import BluetoothConnectModal from './BluetoothModal';
-import useBluetooth, {sendData} from "./UseBluetooth";
+import useBluetooth, { sendData } from "./UseBluetooth";
 import { DeviceMotion } from 'expo-sensors';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import Slider from '@react-native-community/slider';
 
 const Stack = createStackNavigator();
 
@@ -51,12 +52,20 @@ const ControlsScreen = ({ route, navigation }) => {
   //const { device } = route.params;
   const [orientation, setOrientation] = useState({
     direction: 'Recto',
-    angle: 0,
-    alpha: 0,
-    beta: 0,
-    gamma: 0
+    angle: 0
   });
   const [isLandscape, setIsLandscape] = useState(false);
+  const [speed, setSpeed] = useState(4);
+  const [reverseSpeed, setReverseSpeed] = useState(7);
+
+  const ControlsButton = (props) => {
+    const { onPress, title } = props;
+    return (
+      <Pressable style={styles.controlsButton} onPress={onPress}>
+        <Text style={styles.controlsButtonText}>{title}</Text>
+      </Pressable>
+    );
+  };
 
   useEffect(() => {
     // Force landscape mode in this screen
@@ -72,7 +81,7 @@ const ControlsScreen = ({ route, navigation }) => {
     };
 
     // This changes how often is the rotation of the screen updated
-    DeviceMotion.setUpdateInterval(10);
+    DeviceMotion.setUpdateInterval(1000);
 
     const motionSubscription = DeviceMotion.addListener(({ rotation }) => {
       if (rotation) {
@@ -82,8 +91,12 @@ const ControlsScreen = ({ route, navigation }) => {
         let direction = 'Directo';
         if (degrees < -15) {
           direction = 'Girando a la Izquierda';
+          //sendData(device, 1)
         } else if (degrees > 15) {
           direction = 'Girando a la Derecha';
+          //sendData(device, 2)
+        } else {
+          //sendData(device, 0)
         }
 
         setOrientation({
@@ -95,7 +108,6 @@ const ControlsScreen = ({ route, navigation }) => {
       }
     });
 
-    // Llamar a las funciones de configuración
     lockOrientation();
     checkOrientation();
 
@@ -107,25 +119,30 @@ const ControlsScreen = ({ route, navigation }) => {
   }, [isLandscape]);
 
   return (
-    <View style={styles.layout}>
-      <Text style={styles.title}>Controls</Text>
-      <Button
-        title="blue"
-        onPress={() => sendData(device, 'Blue')}
-      />
-      <Button
-        title="gree"
-        onPress={() => sendData(device, 'Gree')}
-      />
-      <Button
-        title="Go to Main menu"
-        onPress={() => navigation.navigate('Main')}
-      />
-     <Text style={styles.title}>Dirección: {orientation.direction}</Text>
-     <Text style={styles.title}>Ángulo: {orientation.angle.toFixed(2)}°</Text>
-     <Text style={styles.title}>Alpha: {orientation.alpha}</Text>
-     <Text style={styles.title}>Beta: {orientation.beta}</Text>
-     <Text style={styles.title}>Gamma: {orientation.gamma}</Text>
+    <View style={styles.controls}>
+      <ControlsButton title={"Reverse"} onPress={() => console.log(`Reverseando con intensidad: ${reverseSpeed}`)} />
+      <View>
+        <View style={styles.controlsCenter}>
+          <Text style={styles.controlsText}>Controls</Text>
+          <Button
+            title="Go to Main menu"
+            onPress={() => navigation.navigate('Main')}
+          />
+          <Text style={styles.controlsText}>Dirección: {orientation.direction}</Text>
+          <Text style={styles.controlsText}>Ángulo: {orientation.angle.toFixed(2)}°</Text>
+        </View>
+        <Slider
+          style={styles.slider}
+          minimumValue={1} // Valor mínimo
+          maximumValue={3} // Valor máximo
+          step={1} // Incremento
+          renderStepNumber={true}
+          onValueChange={setSpeed} // Actualiza el estado cada vez que cambia el valor
+        />
+      </View>
+      <ControlsButton title={"Gas"} onPress={() => {
+        console.log(`Acelerando con intensidad: ${speed}`)
+      }} />
     </View>
   );
 };
@@ -203,5 +220,43 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     borderRadius: 10,
     padding: 9,
+  },
+  controls: {
+    backgroundColor: '#00003f',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    padding: 10,
+  },
+  controlsText: {
+    color: 'white',
+    fontSize: 18,
+    marginVertical: 10,
+  },
+  controlsButton: {
+    backgroundColor: Colors.secondary,
+    borderRadius: 70,
+    fontSize: 1,
+    minWidth: 150,
+    minHeight: 150,
+    alignSelf: 'flex-end',
+    marginBottom: 30,
+  },
+  controlsButtonText: {
+    color: Colors.primary,
+    fontWeight: '900',
+    fontSize: 20,
+    textAlign: 'center',
+    marginVertical: 'auto'
+  },
+  slider: {
+    color: 'white',
+    backgroundColor: 'white',
+    paddingVertical: 20,
+    borderRadius: 10
+  },
+  controlsCenter: {
+    alignItems: 'center'
   }
 });
