@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Button, Pressable, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import BluetoothConnectModal from './BluetoothModal';
 import useBluetooth, {sendData} from "./UseBluetooth";
+import { DeviceMotion } from 'expo-sensors';
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 const Stack = createStackNavigator();
 
@@ -46,7 +48,63 @@ const MainScreen = ({ navigation }) => {
 };
 
 const ControlsScreen = ({ route, navigation }) => {
-  const { device } = route.params;
+  //const { device } = route.params;
+  const [orientation, setOrientation] = useState({
+    direction: 'Recto',
+    angle: 0,
+    alpha: 0,
+    beta: 0,
+    gamma: 0
+  });
+  const [isLandscape, setIsLandscape] = useState(false);
+
+  useEffect(() => {
+    // Force landscape mode in this screen
+    const lockOrientation = async () => {
+      await ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.LANDSCAPE
+      );
+    };
+
+    const checkOrientation = async () => {
+      const { width, height } = Dimensions.get('window');
+      setIsLandscape(width > height);
+    };
+
+    // This changes how often is the rotation of the screen updated
+    DeviceMotion.setUpdateInterval(10);
+
+    const motionSubscription = DeviceMotion.addListener(({ rotation }) => {
+      if (rotation) {
+        // Calculate the inclination of the phone in landscape mode
+        const degrees = rotation.beta * (180 / Math.PI);
+
+        let direction = 'Directo';
+        if (degrees < -15) {
+          direction = 'Girando a la Izquierda';
+        } else if (degrees > 15) {
+          direction = 'Girando a la Derecha';
+        }
+
+        setOrientation({
+          direction,
+          angle: degrees
+        });
+
+        console.log(`Inclinación: ${direction} (${degrees.toFixed(2)}°)`);
+      }
+    });
+
+    // Llamar a las funciones de configuración
+    lockOrientation();
+    checkOrientation();
+
+    // Limpiar suscripciones y desbloquear orientación al salir
+    return () => {
+      motionSubscription.remove();
+      ScreenOrientation.unlockAsync();
+    };
+  }, [isLandscape]);
 
   return (
     <View style={styles.layout}>
@@ -63,6 +121,11 @@ const ControlsScreen = ({ route, navigation }) => {
         title="Go to Main menu"
         onPress={() => navigation.navigate('Main')}
       />
+     <Text style={styles.title}>Dirección: {orientation.direction}</Text>
+     <Text style={styles.title}>Ángulo: {orientation.angle.toFixed(2)}°</Text>
+     <Text style={styles.title}>Alpha: {orientation.alpha}</Text>
+     <Text style={styles.title}>Beta: {orientation.beta}</Text>
+     <Text style={styles.title}>Gamma: {orientation.gamma}</Text>
     </View>
   );
 };
@@ -98,9 +161,9 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 16,
-    fontSize: 46,
+    fontSize: 20,
     fontWeight: '900',
-    color: Colors.secondary,
+    color: 'black',
     letterSpacing: 3,
   },
   button: {
