@@ -65,7 +65,7 @@ export const sendData = async (device, data) => {
       return;
     }
 
-    //const uint8Data = new Uint8Array([parseInt(data)]);
+    const uint8Data = new Uint8Array([parseInt(data)]);
 
     await device.write(data);
     console.log('Data sent:', data);

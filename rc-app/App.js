@@ -49,20 +49,28 @@ const MainScreen = ({ navigation }) => {
 };
 
 const ControlsScreen = ({ route, navigation }) => {
-  //const { device } = route.params;
+  const { device } = route.params;
   const [orientation, setOrientation] = useState({
     direction: 'Recto',
     angle: 0
   });
   const [isLandscape, setIsLandscape] = useState(false);
-  const [speed, setSpeed] = useState(4);
-  const [reverseSpeed, setReverseSpeed] = useState(7);
+  const [speed, setSpeed] = useState(2);
 
   const ControlsButton = (props) => {
     const { onPress, title } = props;
     return (
       <Pressable style={styles.controlsButton} onPress={onPress}>
         <Text style={styles.controlsButtonText}>{title}</Text>
+      </Pressable>
+    );
+  };
+
+  const BrakeButton = (props) => {
+    const { onPress, title } = props;
+    return (
+      <Pressable style={styles.brakeButton} onPress={onPress}>
+        <Text style={styles.brakeButtonText}>{title}</Text>
       </Pressable>
     );
   };
@@ -81,22 +89,22 @@ const ControlsScreen = ({ route, navigation }) => {
     };
 
     // This changes how often is the rotation of the screen updated
-    DeviceMotion.setUpdateInterval(1000);
+    DeviceMotion.setUpdateInterval(500);
 
     const motionSubscription = DeviceMotion.addListener(({ rotation }) => {
       if (rotation) {
         // Calculate the inclination of the phone in landscape mode
         const degrees = rotation.beta * (180 / Math.PI);
 
-        let direction = 'Directo';
+        let direction = '⬆️';
         if (degrees < -15) {
-          direction = 'Girando a la Izquierda';
-          //sendData(device, 1)
+          direction = '⬅️';
+          sendData(device, '1')
         } else if (degrees > 15) {
-          direction = 'Girando a la Derecha';
-          //sendData(device, 2)
+          direction = '➡️';
+          sendData(device, '2')
         } else {
-          //sendData(device, 0)
+          sendData(device, '0')
         }
 
         setOrientation({
@@ -120,29 +128,43 @@ const ControlsScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.controls}>
-      <ControlsButton title={"Reverse"} onPress={() => console.log(`Reverseando con intensidad: ${reverseSpeed}`)} />
+      <ControlsButton title={"Reverse"} onPress={() => {
+        console.log(`Reverseando con intensidad: ${speed}`);
+       sendData(device, `${speed + 5}`);
+      }} />
       <View>
         <View style={styles.controlsCenter}>
-          <Text style={styles.controlsText}>Controls</Text>
+          <Text style={styles.controlsTitle}>Controls</Text>
           <Button
             title="Go to Main menu"
             onPress={() => navigation.navigate('Main')}
           />
-          <Text style={styles.controlsText}>Dirección: {orientation.direction}</Text>
-          <Text style={styles.controlsText}>Ángulo: {orientation.angle.toFixed(2)}°</Text>
+          <Text style={styles.direction}>{orientation.direction}</Text>
+          <Text style={styles.controlsText}>Angle: {orientation.angle.toFixed(2)}°</Text>
         </View>
-        <Slider
-          style={styles.slider}
-          minimumValue={1} // Valor mínimo
-          maximumValue={3} // Valor máximo
-          step={1} // Incremento
-          renderStepNumber={true}
-          onValueChange={setSpeed} // Actualiza el estado cada vez que cambia el valor
-        />
+        <View style={styles.sliderContainer}>
+          <Text style={styles.sliderText}>Speed</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={1}
+            maximumValue={3}
+            step={1}
+            value={2}
+            renderStepNumber={true}
+            onValueChange={setSpeed}
+          />
+        </View>
       </View>
-      <ControlsButton title={"Gas"} onPress={() => {
-        console.log(`Acelerando con intensidad: ${speed}`)
-      }} />
+      <View>
+      <BrakeButton title={"Brake"} onPress={() => {
+          console.log("Frenando");
+         sendData(device, '9');
+        }} />
+        <ControlsButton title={"Drive"} onPress={() => {
+          console.log(`Acelerando con intensidad: ${speed}`);
+          sendData(device, `${speed + 2}`);
+        }} />
+      </View>
     </View>
   );
 };
@@ -178,9 +200,9 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 16,
-    fontSize: 20,
+    fontSize: 50,
     fontWeight: '900',
-    color: 'black',
+    color: Colors.secondary,
     letterSpacing: 3,
   },
   button: {
@@ -250,13 +272,49 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 'auto'
   },
-  slider: {
+  sliderContainer: {
     color: 'white',
     backgroundColor: 'white',
-    paddingVertical: 20,
-    borderRadius: 10
+    paddingBottom: 20,
+    borderRadius: 10,
   },
   controlsCenter: {
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    height: '70%'
+  },
+  sliderText: {
+    textAlign: 'center',
+    paddingVertical: 10,
+    fontWeight: '700'
+  },
+  direction: {
+    fontSize: 30
+  },
+  controlsTitle: {
+    backgroundColor: Colors.secondary,
+    color: Colors.primary,
+    fontSize: 30,
+    fontWeight: '700',
+    borderRadius: 10,
+    borderColor: Colors.primary,
+    borderWidth: 2,
+    padding: 5
+  },
+  brakeButton: {
+    backgroundColor: 'gray',
+    borderRadius: 70,
+    fontSize: 1,
+    minWidth: 100,
+    minHeight: 100,
+    alignSelf: 'flex-end',
+    marginBottom: 30,
+  },
+  brakeButtonText: {
+    color: 'black',
+    fontWeight: '900',
+    fontSize: 20,
+    textAlign: 'center',
+    marginVertical: 'auto'
   }
 });
